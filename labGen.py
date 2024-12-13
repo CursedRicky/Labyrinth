@@ -59,9 +59,10 @@ oldCoords = [0, 0]
 running = True
 coords = [[0, 1], [1, 0], [0, -1], [-1, 0]]
 
-for l in range(10):
+for l in range(15):
     # Controllo validità delle nuove coordinate
     newCoords = []
+    currNodo = nodi[currCoords[0]][currCoords[1]]
     while True:
         tcoords = rn.choice(coords)
         # Controllo uscita colonne
@@ -79,16 +80,18 @@ for l in range(10):
         if currCoords[1] == labRow-1:
             if tcoords[1] == 1:
                 continue
+        
+        if nodi[currCoords[0]+tcoords[0]][currCoords[1]+tcoords[1]].visited == True:
+            continue
 
         newCoords = tcoords
         break
 
-    oldCoords = currCoords
-    currCoords[0] += newCoords[0]
-    print(newCoords[0])
-    currCoords[1] += newCoords[1]
-    print(newCoords[1])
-    print(str(oldCoords) + " " + str(currCoords))
+    
+    currNodo.visited = True
+    drawLine(currCoords, (currCoords[0]+newCoords[0], currCoords[1]+newCoords[1]))
+    currCoords[0]+=newCoords[0]
+    currCoords[1]+=newCoords[1]
 
 
 print(nodi[9][3])
