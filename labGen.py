@@ -12,8 +12,8 @@ dt = 0
 
 nodi = []
 
-labCol = 10
-labRow = 10
+labCol = 20
+labRow = 20
 
 screen = pygame.display.set_mode((labCol*35, labRow*35))
 
@@ -66,7 +66,9 @@ coords = [[0, 1], [1, 0], [0, -1], [-1, 0]]
 autokill = rn.randint(10,15)
 autokillCounter = 0
 
-for l in range(labCol*labRow):
+ok = []
+
+for l in range(labCol*labRow*2):
     autokillCounter += 1
     modify = False
     tC = [[0, 1], [1, 0], [0, -1], [-1, 0]]
@@ -108,61 +110,45 @@ for l in range(labCol*labRow):
     if not modify:
         drawLine(currCoords, (currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]))
         pygame.display.update()
-        time.sleep(.5)
+        time.sleep(.2)
         currCoords[0] += newCoords[0]
         currCoords[1] += newCoords[1]
     else:
         ctrl = True
         riga = 0
         colonna = 0
-        while ctrl:
-            tC = [[0, 1], [1, 0], [0, -1], [-1, 0]]
-            if nodi[colonna][riga].visited:
-                node = nodi[colonna][riga]
-                if node.column == 0:
-                    tC.remove([-1, 0])
-                if node.column == labCol - 1:
-                    tC.remove([1, 0])
+        for r in nodi:
+            for c in r:
+                if c.visited and ctrl:
+                    tC = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+                    if c.column == 0:
+                        tC.remove([-1, 0])
+                    if c.column == labCol - 1:
+                        tC.remove([1, 0])
 
-                # Controllo uscita riga
-                if node.row == 0:
-                    tC.remove([0, -1])
-                if node.row == labRow - 1:
-                    tC.remove([0, 1])
+                    if c.row == 0:
+                        tC.remove([0, -1])
+                    if c.row == labRow - 1:
+                        tC.remove([0, 1])
 
-                ta = []
-                rn.shuffle(tC)
-                for tt in tC:
-                    if not nodi[colonna + tt[0]][riga + tt[1]].visited:
-                        ta.append(tt)
+                    ta = []
+                    rn.shuffle(tC)
+                    for tt in tC:
+                        if not nodi[c.column + tt[0]][c.row + tt[1]].visited:
+                            ta.append(tt)
+                    ok = []
+                    ok.append(ta)
+                    ok.append(currCoords)
 
-
-
-
-                print(len(ta))
-                if len(ta) > 0:
-                    currCoords[0] = colonna
-                    currCoords[1] = riga
-                    ctrl = False
-
-                else :
-                    colonna += 1
-                    if colonna == labCol:
-                        colonna = 0
-                        riga += 1
-                '''
-            else :
-                colonna+=1
-                if colonna == labCol:
-                    colonna = 0
-                    riga+=1
-                if riga == 10:
-                    ctrl = False
-                print("B")
-            '''
+                    if len(ta) > 0:
+                        currCoords[0] = c.column
+                        currCoords[1] = c.row
+                        ctrl = False
+                        break
 
 
 print("finito")
+print(ok)
 
     # print(currCoords)
 
