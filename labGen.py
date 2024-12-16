@@ -8,8 +8,11 @@ import stack
 # pygame setup
 pygame.init()
 clock = pygame.time.Clock()
+pygame.display.set_caption("LabGen")
+surface = pygame.Surface((600,400), pygame.SRCALPHA)
 dt = 0
 
+lines = []
 nodi = []
 
 labCol = 20
@@ -35,20 +38,20 @@ class Nodo:
         return str(self.column) + " " + str(self.row)
 
 
-def applyCoefficente(value) -> int:
-    return startPos + (value * coefficente)
+def applyCoefficente(value, starting=startPos) -> int:
+    return starting + (value * coefficente)
 
 
-def drawLine(fromP, toP, color="#00a8f3"):
-    pygame.draw.line(screen, color, (applyCoefficente(fromP[0]), applyCoefficente(fromP[1])),
-                     (applyCoefficente(toP[0]), applyCoefficente(toP[1])), 5)
+def drawLine(fromP, toP, color="#229743", w=5):
+    lines.append(pygame.draw.line(screen, color, (applyCoefficente(fromP[0]), applyCoefficente(fromP[1])),
+                     (applyCoefficente(toP[0]), applyCoefficente(toP[1])), w))
 
 
 for y in range(labRow):
     # y riga
     # i colonna
     for i in range(labCol):
-        pygame.draw.circle(screen, "#00a8f3", (applyCoefficente(i), applyCoefficente(y)), 5)
+        pygame.draw.circle(screen, "#229743", (applyCoefficente(i), applyCoefficente(y)), 5)
 
 for r in range(labRow):
     rnodi = []
@@ -109,8 +112,9 @@ for l in range(labCol*labRow*2):
     currNodo.visited = True
     if not modify:
         drawLine(currCoords, (currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]))
+        nodi[currCoords[0]][currCoords[1]].pointTo = [currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]]
         pygame.display.update()
-        time.sleep(.2)
+        # time.sleep(.01)
         currCoords[0] += newCoords[0]
         currCoords[1] += newCoords[1]
     else:
@@ -136,7 +140,6 @@ for l in range(labCol*labRow*2):
                     for tt in tC:
                         if not nodi[c.column + tt[0]][c.row + tt[1]].visited:
                             ta.append(tt)
-                    ok = []
                     ok.append(ta)
                     ok.append(currCoords)
 
@@ -147,13 +150,28 @@ for l in range(labCol*labRow*2):
                         break
 
 
-print("finito")
-print(ok)
+pygame.draw.line(screen, "white", (applyCoefficente(0, 35), applyCoefficente(labCol, 35)),
+                             (applyCoefficente(labCol-1, 65), applyCoefficente(labCol, 35)), 2)
 
-    # print(currCoords)
+pygame.draw.line(screen, "white", (applyCoefficente(labCol, 35), applyCoefficente(0, 35)),
+                             (applyCoefficente(labCol-1, 65), applyCoefficente(labCol, 35)), 2)
 
-# drawLine((1, 3), (9, 4))
+for r in nodi:
+    for c in r:
+        if not pygame.draw.line(screen, "blue", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                             (applyCoefficente(c.column, 65), applyCoefficente(c.row, 35)), 1).collideobjects(lines):
+            pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                             (applyCoefficente(c.column, 65), applyCoefficente(c.row, 35)), 2)
 
-while True:
-    pygame.display.update()
-    clock.tick(60)
+for r in nodi:
+    for c in r:
+        if not pygame.draw.line(screen, "blue", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                             (applyCoefficente(c.column-1, 65), applyCoefficente(c.row+1, 35)), 1).collideobjects(lines):
+            pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                             (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
+
+
+pygame.display.update()
+while pygame.event.wait().type != pygame.QUIT:
+    pass
+pygame.quit()
