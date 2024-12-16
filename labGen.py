@@ -20,12 +20,13 @@ walls = True
 coefficente = 30
 startPos = 50
 autokill = rn.randint(10,15)
-autokillCounter = 0
+delay = .1 # Delay in seconds
 
 screen = pygame.display.set_mode((labCol*35, labRow*35))
 surface = pygame.Surface((labCol*35, labRow*35), pygame.SRCALPHA)
 
 screen.fill("#333333")
+autokillCounter = 0
 
 class Nodo:
     pointTo = []
@@ -43,7 +44,7 @@ def applyCoefficente(value, starting=startPos) -> int:
     return starting + (value * coefficente)
 
 
-def drawLine(fromP, toP, color="#229743", w=5):
+def drawLine(fromP, toP, color="#c71585", w=5):
     lines.append(pygame.draw.line(screen, color, (applyCoefficente(fromP[0]), applyCoefficente(fromP[1])),
                      (applyCoefficente(toP[0]), applyCoefficente(toP[1])), w))
 
@@ -52,7 +53,7 @@ for y in range(labRow):
     # y riga
     # i colonna
     for i in range(labCol):
-        pygame.draw.circle(screen, "#229743", (applyCoefficente(i), applyCoefficente(y)), 5)
+        pygame.draw.circle(screen, "#c71585", (applyCoefficente(i), applyCoefficente(y)), 5)
 
 for r in range(labRow):
     rnodi = []
@@ -66,8 +67,6 @@ currCoords = [0, 0]
 oldCoords = [0, 0]
 running = True
 coords = [[0, 1], [1, 0], [0, -1], [-1, 0]]
-
-ok = []
 
 for l in range(labCol*labRow*2):
     autokillCounter += 1
@@ -112,7 +111,7 @@ for l in range(labCol*labRow*2):
         drawLine(currCoords, (currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]))
         nodi[currCoords[0]][currCoords[1]].pointTo = [currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]]
         pygame.display.update()
-        # time.sleep(.01)
+        time.sleep(delay)
         currCoords[0] += newCoords[0]
         currCoords[1] += newCoords[1]
     else:
@@ -138,8 +137,6 @@ for l in range(labCol*labRow*2):
                     for tt in tC:
                         if not nodi[c.column + tt[0]][c.row + tt[1]].visited:
                             ta.append(tt)
-                    ok.append(ta)
-                    ok.append(currCoords)
 
                     if len(ta) > 0:
                         currCoords[0] = c.column
