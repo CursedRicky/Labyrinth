@@ -3,8 +3,6 @@ import time
 import pygame
 import random as rn
 
-import stack
-
 # pygame setup
 pygame.init()
 pygame.display.set_caption("LabGen")
