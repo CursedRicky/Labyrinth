@@ -7,24 +7,25 @@ import stack
 
 # pygame setup
 pygame.init()
-clock = pygame.time.Clock()
 pygame.display.set_caption("LabGen")
-surface = pygame.Surface((600,400), pygame.SRCALPHA)
 dt = 0
 
 lines = []
 nodi = []
 
+# Settings
 labCol = 20
 labRow = 20
-
-screen = pygame.display.set_mode((labCol*35, labRow*35))
-
+walls = True
 coefficente = 30
 startPos = 50
+autokill = rn.randint(10,15)
+autokillCounter = 0
+
+screen = pygame.display.set_mode((labCol*35, labRow*35))
+surface = pygame.Surface((labCol*35, labRow*35), pygame.SRCALPHA)
 
 screen.fill("#333333")
-
 
 class Nodo:
     pointTo = []
@@ -65,9 +66,6 @@ currCoords = [0, 0]
 oldCoords = [0, 0]
 running = True
 coords = [[0, 1], [1, 0], [0, -1], [-1, 0]]
-
-autokill = rn.randint(10,15)
-autokillCounter = 0
 
 ok = []
 
@@ -150,27 +148,30 @@ for l in range(labCol*labRow*2):
                         break
 
 
-pygame.draw.line(screen, "white", (applyCoefficente(0, 35), applyCoefficente(labCol, 35)),
-                             (applyCoefficente(labCol-1, 65), applyCoefficente(labCol, 35)), 2)
+if walls:
+    pygame.draw.line(screen, "white", (applyCoefficente(0, 35), applyCoefficente(labCol, 35)),
+                     (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol, 35)), 2)
 
-pygame.draw.line(screen, "white", (applyCoefficente(labCol, 35), applyCoefficente(0, 35)),
-                             (applyCoefficente(labCol-1, 65), applyCoefficente(labCol, 35)), 2)
+    pygame.draw.line(screen, "white", (applyCoefficente(labCol, 35), applyCoefficente(0, 35)),
+                     (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol, 35)), 2)
 
-for r in nodi:
-    for c in r:
-        if not pygame.draw.line(screen, "blue", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
-                             (applyCoefficente(c.column, 65), applyCoefficente(c.row, 35)), 1).collideobjects(lines):
-            pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
-                             (applyCoefficente(c.column, 65), applyCoefficente(c.row, 35)), 2)
+    for r in nodi:
+        for c in r:
+            if not pygame.draw.line(surface, (0,0,0,0), (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                                    (applyCoefficente(c.column, 65), applyCoefficente(c.row, 35)), 1).collideobjects(
+                lines):
+                pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                                 (applyCoefficente(c.column, 65), applyCoefficente(c.row, 35)), 2)
 
-for r in nodi:
-    for c in r:
-        if not pygame.draw.line(screen, "blue", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
-                             (applyCoefficente(c.column-1, 65), applyCoefficente(c.row+1, 35)), 1).collideobjects(lines):
-            pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
-                             (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
+    for r in nodi:
+        for c in r:
+            if not pygame.draw.line(surface, (0,0,0,0), (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                                    (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)),
+                                    1).collideobjects(lines):
+                pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                                 (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
 
-
+screen.blit(surface, (0,0))
 pygame.display.update()
 while pygame.event.wait().type != pygame.QUIT:
     pass
