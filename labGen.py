@@ -29,6 +29,8 @@ autokillCounter = 0
 class Nodo:
     pointTo = []
     visited = False
+    start = False
+    finish = False
 
     def __init__(self, column, row):
         self.row: int = row
@@ -59,6 +61,9 @@ for r in range(labRow):
         nodo = Nodo(c, r)
         rnodi.append(nodo)
     nodi.append(rnodi)
+
+nodi[0][0].start = True
+nodi[labCol-1][labRow-1].finish = False
 
 #            C, R
 currCoords = [0, 0]
@@ -148,7 +153,7 @@ if walls:
                      (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol, 35)), 2)
 
     pygame.draw.line(screen, "white", (applyCoefficente(labCol, 35), applyCoefficente(0, 35)),
-                     (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol, 35)), 2)
+                     (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol-1, 35)), 2)
 
     for r in nodi:
         for c in r:
@@ -163,9 +168,9 @@ if walls:
             if not pygame.draw.line(surface, (0,0,0,0), (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
                                     (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)),
                                     1).collideobjects(lines):
-                pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
-                                 (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
-
+                                if not c.start:
+                                    pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                                                     (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
 screen.blit(surface, (0,0))
 pygame.display.update()
 while pygame.event.wait().type != pygame.QUIT:
