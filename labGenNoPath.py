@@ -17,12 +17,11 @@ nodi = []
 labCol = 25
 labRow = 25
 walls = True
-visiblePaths = False # Set delay to 0 if visiblePaths is False
+visiblePaths = False
 coefficente = 30
 startPos = 50
 autokill = rn.randint(40,50)
 colorr = "#c71585"
-delay = 0 # Delay in seconds
 
 screen = pygame.display.set_mode((labCol*35, labRow*35))
 surface = pygame.Surface((labCol*35, labRow*35), pygame.SRCALPHA)
@@ -36,6 +35,8 @@ pygame.display.update()
 class Nodo:
     pointTo = []
     visited = False
+    start = False
+    finish = False
 
     def __init__(self, column, row):
         self.row: int = row
@@ -69,6 +70,9 @@ for r in range(labRow):
         nodo = Nodo(c, r)
         rnodi.append(nodo)
     nodi.append(rnodi)
+
+nodi[0][0].start = True
+nodi[labCol-1][labRow-1].finish = False
 
 #            C, R
 currCoords = [0, 0]
@@ -119,7 +123,6 @@ for l in range(labCol*labRow*2):
         drawLine(currCoords, (currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]))
         nodi[currCoords[0]][currCoords[1]].pointTo = [currCoords[0] + newCoords[0], currCoords[1] + newCoords[1]]
         pygame.display.update()
-        time.sleep(delay)
         currCoords[0] += newCoords[0]
         currCoords[1] += newCoords[1]
     else:
@@ -129,9 +132,6 @@ for l in range(labCol*labRow*2):
         for r in nodi:
             for c in r:
                 if c.visited and ctrl:
-                    print("-----")
-                    print(c.column)
-                    print(c.row)
                     tC = [[0, 1], [1, 0], [0, -1], [-1, 0]]
                     if c.column == 0:
                         tC.remove([-1, 0])
@@ -148,9 +148,9 @@ for l in range(labCol*labRow*2):
                     for tt in tC:
                         if not nodi[c.column + tt[0]][c.row + tt[1]].visited:
                             ta.append(tt)
-
-                    if len(ta) > 0:
-                        print("selected")
+                    if len(ta) == 0:
+                        continue
+                    else:
                         currCoords[0] = c.column
                         currCoords[1] = c.row
                         ctrl = False
@@ -162,7 +162,7 @@ if walls:
                      (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol, 35)), 2)
 
     pygame.draw.line(screen, "white", (applyCoefficente(labCol, 35), applyCoefficente(0, 35)),
-                     (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol, 35)), 2)
+                     (applyCoefficente(labCol - 1, 65), applyCoefficente(labCol-1, 35)), 2)
 
     for r in nodi:
         for c in r:
@@ -177,8 +177,9 @@ if walls:
             if not pygame.draw.line(surface, (0,0,0,0), (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
                                     (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)),
                                     1).collideobjects(lines):
-                pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
-                                 (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
+                if not c.start:
+                    pygame.draw.line(screen, "white", (applyCoefficente(c.column, 35), applyCoefficente(c.row, 35)),
+                                     (applyCoefficente(c.column - 1, 65), applyCoefficente(c.row + 1, 35)), 2)
 
 screen.blit(surface, (0,0))
 screen.blit(path, (0,0))
